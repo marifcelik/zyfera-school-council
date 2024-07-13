@@ -14,9 +14,9 @@ import (
 func main() {
 	app := http.NewServeMux()
 
-	app.HandleFunc("/health_check", handler.HealthCheck)
+	app.HandleFunc("GET /health_check", handler.HealthCheck)
 	app.HandleFunc("POST /create", handler.Create)
-	app.HandleFunc("UPDATE /:id", handler.Update)
+	app.HandleFunc("PATCH /{stdNumber}", handler.Update)
 
 	addr := net.JoinHostPort(config.C.Host, config.C.Port)
 	slog.Info(fmt.Sprintf("server is running on %s", addr))
