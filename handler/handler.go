@@ -38,6 +38,22 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if body.Grades == nil || len(body.Grades) == 0 {
+		utils.JsonResp(w, m{"error": "grades is required"}, http.StatusBadRequest)
+		return
+	} else {
+		for _, grade := range body.Grades {
+			val = v.
+				Is(v.String(grade.Code, "code").Not().Blank()).
+				Is(v.Int(grade.Value, "value").Not().Zero())
+
+			if !val.Valid() {
+				utils.JsonResp(w, m{"error": val.Errors()}, http.StatusBadRequest)
+				return
+			}
+		}
+	}
+
 	log.Printf("body: %+v", body)
 
 	studentExists, err := repo.CheckStudentExistence(body.StdNumber, r.Context())
@@ -100,11 +116,26 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	val := v.
 		Is(v.String(body.Name, "name").Not().Blank()).
 		Is(v.String(body.Surname, "surname").Not().Blank())
-		// TODO add validation for grades
 
 	if !val.Valid() {
 		utils.JsonResp(w, m{"error": val.Errors()}, http.StatusBadRequest)
 		return
+	}
+
+	if body.Grades == nil || len(body.Grades) == 0 {
+		utils.JsonResp(w, m{"error": "grades is required"}, http.StatusBadRequest)
+		return
+	} else {
+		for _, grade := range body.Grades {
+			val = v.
+				Is(v.String(grade.Code, "code").Not().Blank()).
+				Is(v.Int(grade.Value, "value").Not().Zero())
+
+			if !val.Valid() {
+				utils.JsonResp(w, m{"error": val.Errors()}, http.StatusBadRequest)
+				return
+			}
+		}
 	}
 
 	stdNumber := r.PathValue("stdNumber")
