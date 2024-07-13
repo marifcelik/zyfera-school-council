@@ -8,11 +8,10 @@ import (
 )
 
 func CheckStudentExistence(stdNumber string, ctx context.Context) (bool, error) {
-	var student models.Student
 	var count int64
 	err := DB.WithContext(ctx).
+		Table("students").
 		Where("std_number = ?", stdNumber).
-		First(&student).
 		Count(&count).
 		Error
 
@@ -25,8 +24,4 @@ func CreateStudent(student *models.Student, ctx context.Context) error {
 
 func UpdateStudent(student *models.Student, ctx context.Context) error {
 	return DB.WithContext(ctx).Save(student).Where("stdNumber = ?", student.StdNumber).Error
-}
-
-func CreateGrade(grade *models.Grade, ctx context.Context) error {
-	return DB.WithContext(ctx).Create(grade).Error
 }
