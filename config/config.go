@@ -13,7 +13,7 @@ var C config
 
 type config struct {
 	AppEnv string `envDefault:"dev"`
-	DbUrl  string `env:"DB_URL,expand" envDefault:"postgresql://postgres:pass@localhost:5432"`
+	DbUrl  string `env:"DB_URL,expand" envDefault:"postgresql://postgres:pass@localhost:5432/school"`
 	Host   string `envDefault:"localhost"`
 	Port   string `envDefault:"8080"`
 }

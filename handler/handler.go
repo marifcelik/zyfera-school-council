@@ -31,7 +31,6 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		Is(v.String(body.Name, "name").Not().Blank()).
 		Is(v.String(body.Surname, "surname").Not().Blank()).
 		Is(v.String(body.StdNumber, "stdNumber").Not().Blank())
-		// TODO add validation for grades
 
 	if !val.Valid() {
 		utils.JsonResp(w, m{"error": val.Errors()}, http.StatusBadRequest)
