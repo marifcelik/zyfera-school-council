@@ -14,12 +14,14 @@ docker-compose up -d
 
 ## Config
 
-| Field   | Type   | Description                                      | Default Value |
-| ------- | ------ | ------------------------------------------------ | ------------- |
-| AppEnv  | `string` | The environment the application is running in    | "dev"         |
-| DbUrl   | `string` | The URL of the PostgreSQL database               | "postgresql://postgres:pass@localhost:5432/school" |
-| Host    | `string` | The host address the application is running on   | "localhost"   |
-| Port    | `string` | The port number the application is listening on  | "8080"        | 
+You can use environment variables to configure the application. The following environment variables are available:
+
+| Field   | Type     | Description                                     | Default Value                                      |
+| ------- | -------- | ----------------------------------------------- | -------------------------------------------------- |
+| APP_ENV | `string` | The environment the application is running in   | "dev"                                              |
+| DB_URL  | `string` | The URL of the PostgreSQL database              | "postgresql://postgres:pass@localhost:5432/school" |
+| HOST    | `string` | The host address the application is running on  | "localhost"                                        |
+| PORT    | `string` | The port number the application is listening on | "8080"                                             |
 
 ## Database Schema
 
