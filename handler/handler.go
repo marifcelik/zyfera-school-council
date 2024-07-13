@@ -90,7 +90,78 @@ func Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
+	body := dto.UpdateRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		slog.Error(err.Error())
+		utils.ErrResp(w, http.StatusBadRequest, err.Error())
+		return
+	}
 
+	val := v.
+		Is(v.String(body.Name, "name").Not().Blank()).
+		Is(v.String(body.Surname, "surname").Not().Blank())
+		// TODO add validation for grades
+
+	if !val.Valid() {
+		utils.JsonResp(w, m{"error": val.Errors()}, http.StatusBadRequest)
+		return
+	}
+
+	stdNumber := r.PathValue("stdNumber")
+	if stdNumber == "" {
+		utils.ErrResp(w, http.StatusBadRequest, "stdNumber param is required")
+		return
+	}
+
+	studentExists, err := repo.CheckStudentExistence(stdNumber, r.Context())
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		slog.Error(err.Error())
+		utils.InternalErrResp(w, err)
+		return
+	}
+	if !studentExists {
+		utils.ErrResp(w, http.StatusNotFound, "student not found")
+		return
+	}
+
+	grades := reduceGrades(body.Grades)
+
+	student := &models.Student{
+		Name:      body.Name,
+		Surname:   body.Surname,
+		Grades:    grades,
+		StdNumber: stdNumber,
+	}
+
+	if err := repo.UpdateStudent(student, r.Context()); err != nil {
+		slog.Error("update student", "err", err.Error())
+		utils.InternalErrResp(w, err)
+		return
+	}
+
+	respGrades := make([]dto.GradeResponse, 0, len(student.Grades))
+	for _, grade := range student.Grades {
+		respGrades = append(respGrades, dto.GradeResponse{
+			Code:  grade.Code,
+			Value: grade.Value,
+		})
+	}
+
+	resp := dto.CreateResponse{
+		Student: dto.Student{
+			Name:      student.Name,
+			Surname:   student.Surname,
+			StdNumber: student.StdNumber,
+		},
+		ID:     student.ID,
+		Grades: respGrades,
+	}
+
+	fmt.Printf("resp: %vn", resp)
+
+	// student GET endpoint is not implemented yet
+	w.Header().Set("Location", fmt.Sprintf("/students/%d", student.ID))
+	utils.JsonResp(w, m{"status": "success", "data": resp})
 }
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {

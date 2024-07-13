@@ -24,7 +24,7 @@ func CreateStudent(student *models.Student, ctx context.Context) error {
 }
 
 func UpdateStudent(student *models.Student, ctx context.Context) error {
-	return DB.WithContext(ctx).Save(student).Error
+	return DB.WithContext(ctx).Save(student).Where("stdNumber = ?", student.StdNumber).Error
 }
 
 func CreateGrade(grade *models.Grade, ctx context.Context) error {
