@@ -1,29 +1,24 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"log/slog"
+	"net"
 	"net/http"
+
+	"school_council/config"
+	"school_council/handler"
 )
 
 func main() {
 	app := http.NewServeMux()
 
-	app.HandleFunc("POST /create", handleCreate)
-	app.HandleFunc("UPDATE /:id", handleUpdate)
+	app.HandleFunc("/health_check", handler.HealthCheck)
+	app.HandleFunc("POST /create", handler.Create)
+	app.HandleFunc("UPDATE /:id", handler.Update)
 
-	slog.Info("Server is running on port 3000")
-	log.Fatal(http.ListenAndServe(":3000", app))
-}
-
-func handleCreate(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("create"))
-}
-
-func handleUpdate(w http.ResponseWriter, r *http.Request) {
-	// use curl -X POST http://localhost:3000 to test this
-	slog.Info("post request received")
-
-	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte("post request received\n"))
+	addr := net.JoinHostPort(config.C.Host, config.C.Port)
+	slog.Info(fmt.Sprintf("server is running on %s", addr))
+	log.Fatal(http.ListenAndServe(addr, app))
 }
