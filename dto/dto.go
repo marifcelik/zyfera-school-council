@@ -11,9 +11,14 @@ type GradeResponse struct {
 }
 
 type Student struct {
-	Name      string `json:"name"`
-	Surname   string `json:"surname"`
-	StdNumber string `json:"stdNumber"`
+	Name      string `json:"name,omitempty"`
+	Surname   string `json:"surname,omitempty"`
+	StdNumber string `json:"stdNumber,omitempty"`
+}
+
+type StudentUpdate struct {
+	Name    string `json:"name,omitempty"`
+	Surname string `json:"surname,omitempty"`
 }
 
 type CreateRequest struct {
@@ -25,4 +30,16 @@ type CreateResponse struct {
 	Student
 	ID     uint            `json:"id"`
 	Grades []GradeResponse `json:"grades"`
+}
+
+type UpdateRequest struct {
+	StudentUpdate
+	Grades []GradeRequest `json:"grades"`
+}
+
+type UpdateResponse struct {
+	Student
+	ID        uint            `json:"id"`
+	Grades    []GradeResponse `json:"grades"`
+	UpdatedAt string          `json:"updated_at"`
 }
