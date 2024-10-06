@@ -37,7 +37,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if body.Grades == nil || len(body.Grades) == 0 {
+	if len(body.Grades) == 0 {
 		utils.JsonResp(w, m{"error": "grades is required"}, http.StatusBadRequest)
 		return
 	} else {
@@ -121,7 +121,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if body.Grades == nil || len(body.Grades) == 0 {
+	if len(body.Grades) == 0 {
 		utils.JsonResp(w, m{"error": "grades is required"}, http.StatusBadRequest)
 		return
 	} else {
